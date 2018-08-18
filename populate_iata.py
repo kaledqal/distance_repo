@@ -1,3 +1,7 @@
+'''
+Littel script used to get Iata codes  and their corresponding latitude and longitude
+and save the data to an sqlite Database
+'''
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','QuickProject.settings')
 
@@ -8,7 +12,7 @@ from hello_world.models import Iata
 records = None
 with open('airport_lat_long.txt','r') as recs:
     records = recs.read().split('\n')
-    records.pop()#the last record is a blank tring so i remove that
+    records.pop()#the last record is a blank string so i remove that
     print("{l} Records where retrieved from the file ".format(l=len(records)))
 
 
