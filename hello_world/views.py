@@ -21,9 +21,9 @@ class HelloView(APIView):
         "Input 2": "IATA code for the destination airport",
         "Output":{
             "Success status": {
-                    "0":"Success",
-                    "1":"One of the location IATA code is not in the database",
-                    "2":"Invalid Input"},
+                    "200":"Success",
+                    "404":"One or both of the location IATA code is not in the database",
+                    "412":"Invalid Input"},
             "IATA Code 1": "The origin IATA code",
             "IATA Code 2": "The destination IATA code",
             "distance": "The distance between the two airports on the globe"
@@ -37,8 +37,8 @@ class HelloView(APIView):
         code_2=None
         serializer = serializers.InputSerializer(data=request.data)
         if serializer.is_valid():
-            code_1 = serializer.data.get('iata_code_1')
-            code_2 = serializer.data.get('iata_code_2')
+            code_1 = serializer.data.get('iata_code_1').upper()
+            code_2 = serializer.data.get('iata_code_2').upper()
             try:
                 #get the latitude and longitudes from the user data
                 lat1=float(Iata.objects.get(pk=code_1).lat)
@@ -56,10 +56,10 @@ class HelloView(APIView):
                 haversine = (math.sin(delta_lat/2))**2 + math.cos(lat1)*math.cos(lat2)*(math.sin(delta_lng/2))**2 #works well up to this point
                 mul  = 2 * math.atan2(math.sqrt(haversine),math.sqrt(1-haversine))
                 distance = RADIUS * mul
-                return Response({"Status":"0","IATA Code 1":code_1,"IATA Code 2":code_2,"Distance":distance})
+                return Response({"Status":status.HTTP_200_OK,"IATA Code 1":code_1,"IATA Code 2":code_2,"Distance":distance})
             except:
-                return Response({"Status":"1","CODE 1":code_1,"CODE 2":code_2})
+                return Response({"Status":status.HTTP_404_NOT_FOUND,"CODE 1":code_1,"CODE 2":code_2})
 
-        code_1 = serializer.data.get('iata_code_1')
-        code_2 = serializer.data.get('iata_code_2')
-        return Response({"Status":"2","CODE 1":code_1,"CODE 2":code_2})
+        code_1 = serializer.data.get('iata_code_1').upper()
+        code_2 = serializer.data.get('iata_code_2').upper()
+        return Response({"Status":status.HTTP_412_PRECONDITION_FAILED})

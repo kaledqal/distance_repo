@@ -10,16 +10,25 @@ def validate_input(value):
 
 class InputSerializer(serializers.Serializer):
     iata_code_1 = serializers.CharField(
-                label="IATA Code 1",validators=[validate_input,],
+                label="IATA Code 1",required="required",validators=[validate_input,],
                 max_length=3,
                 style={
                     "placeholder":"Enter Three Characters,eg XXX",
                     "max_length":"3"
                     })
     iata_code_2 = serializers.CharField(
-                label="IATA Code 2",validators=[validate_input,],
+                label="IATA Code 2",required="required",validators=[validate_input,],
                 max_length=3,
                 style={
                     "placeholder":"Enter Three Characters,eg XXX",
                     "max_length":"3"
                     })
+    class Meta:
+        extra_kwargs = {
+            'iata_code_1':{
+                'required':True
+            },
+            'iata_code_2':{
+                'required':True
+            }
+        }
